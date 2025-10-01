@@ -10,3 +10,4 @@ A simple and interactive **Calculator application** that can perform basic arith
 
 
 ![Calculator Screenshot](images/calculator-screenshot.png)
+
