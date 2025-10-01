@@ -9,5 +9,6 @@ A simple and interactive **Calculator application** that can perform basic arith
 - You can calculate using your voice
 
 
-![Calculator Screenshot](images/calculator-screenshot.png)
+![Calculator Screenshot](Projects/images/calculator-screenshot.png)
+
 
