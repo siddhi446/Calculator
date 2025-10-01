@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="Calculator.css">
+    <title>Calculator</title>
+</head>
+<body>
+    <div id="Calculator">
+        <input type="text" id="display" readonly>
+        <div class="button-container">
+
+            <button class="button" onclick="currentDisplay='';
+            document.querySelector('#display').value=currentDisplay">C</button>
+
+            <button class="button" onclick="currentDisplay=currentDisplay+'1';document.querySelector('#display').value=currentDisplay">1</button>
+
+            <button class="button" onclick="currentDisplay=currentDisplay+'2';document.querySelector('#display').value=currentDisplay">2</button> 
+
+            <button class="button" onclick="currentDisplay=currentDisplay+'+';document.querySelector('#display').value=currentDisplay">+</button>
+
+            <button class="button" onclick="currentDisplay=currentDisplay+'3';document.querySelector('#display').value=currentDisplay">3</button>
+
+            <button class="button" onclick="currentDisplay=currentDisplay+'4';document.querySelector('#display').value=currentDisplay">4</button>
+
+            <button class="button" onclick="currentDisplay=currentDisplay+'-';document.querySelector('#display').value=currentDisplay">-</button>
+
+            <button class="button" onclick="currentDisplay=currentDisplay+'5';document.querySelector('#display').value=currentDisplay">5</button>
+
+            <button class="button" onclick="currentDisplay=currentDisplay+'6';document.querySelector('#display').value=currentDisplay">6</button>
+
+            <button class="button" onclick="currentDisplay=currentDisplay+'*';document.querySelector('#display').value=currentDisplay">*</button>
+
+            <button class="button" onclick="currentDisplay=currentDisplay+'7';document.querySelector('#display').value=currentDisplay">7</button>
+
+            <button class="button" onclick="currentDisplay=currentDisplay+'8';document.querySelector('#display').value=currentDisplay">8</button>
+
+            <button class="button" onclick="currentDisplay=currentDisplay+'/';document.querySelector('#display').value=currentDisplay">/</button>
+
+            <button class="button" onclick="
+            let result = eval(currentDisplay);
+            history.push(currentDisplay + ' = ' + result);
+            currentDisplay = result;
+            document.querySelector('#display').value=currentDisplay;">=</button>
+
+            <button class="button" onclick="currentDisplay=currentDisplay+'9';document.querySelector('#display').value=currentDisplay">9</button>
+
+            <button class="button" onclick="currentDisplay=currentDisplay+'0';document.querySelector('#display').value=currentDisplay">0</button>
+
+            <button class="button" onclick="currentDisplay=currentDisplay+'.';document.querySelector('#display').value=currentDisplay">.</button>
+
+             <button class="button" onclick="startVoice()">🎤</button>
+            
+            <button class="button" onclick="showHistory()">History</button>
+        </div>
+
+        
+        <div id="historyBox">
+            <h4>History</h4>
+            <ul id="historyList"></ul>
+        </div>
+    </div>
+
+    <script>
+        let currentDisplay='';
+        let history = []; 
+        document.querySelector('#display').value=currentDisplay;
+
+        function showHistory() {
+            let historyBox = document.getElementById("historyBox");
+            let historyList = document.getElementById("historyList");
+
+            
+            if (historyBox.style.display === "none") {
+                historyBox.style.display = "block";
+            } else {
+                historyBox.style.display = "none";
+            }
+
+            
+            historyList.innerHTML = "";
+            history.forEach(item => {
+                let li = document.createElement("li");
+                li.textContent = item;
+                historyList.appendChild(li);
+            });
+        }
+        document.addEventListener('keydown', function(event) {
+        const key = event.key; // key pressed by user
+
+        if (!isNaN(key) || key === '.') {
+        // number or decimal
+        currentDisplay += key;
+    } 
+        else if (key === '+' || key === '-' || key === '*' || key === '/') {
+        // operator
+        currentDisplay += key;
+    } 
+        else if (key === 'Enter') {
+        // equals
+        try {
+            let result = eval(currentDisplay);
+            history.push(currentDisplay + ' = ' + result);
+            currentDisplay = result;
+        } catch {
+            currentDisplay = "Error";
+        }
+    } 
+        else if (key === 'Backspace') {
+        // delete last character
+        currentDisplay = currentDisplay.slice(0, -1);
+    } 
+        else if (key.toLowerCase() === 'c') {
+        // clear
+        currentDisplay = '';
+    }
+
+    // update display
+    document.querySelector('#display').value = currentDisplay;
+});
+
+        // Check if browser supports SpeechRecognition
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+
+        recognition.onresult = function(event) {
+            let spokenText = event.results[0][0].transcript;
+            // Convert spoken text to calculator-friendly format
+            let expression = convertSpeechToMath(spokenText);
+            
+            try {
+                let result = eval(expression);
+                document.querySelector('#display').value = result;
+                history.push(expression + ' = ' + result); // store in history
+                currentDisplay = result; // update current display
+            } catch {
+                document.querySelector('#display').value = "Error";
+            }
+        };
+
+        recognition.onerror = function(event) {
+            console.error("Voice recognition error:", event.error);
+        };
+
+        function startVoice() {
+            recognition.start();
+        }
+    } else {
+        alert("Sorry, your browser does not support voice recognition.");
+    }
+
+    function convertSpeechToMath(spokenText) {
+    spokenText = spokenText.toLowerCase();
+    spokenText = spokenText.replace(/plus/g, '+');
+    spokenText = spokenText.replace(/minus/g, '-');
+    spokenText = spokenText.replace(/times|multiply/g, '*');
+    spokenText = spokenText.replace(/divided by|over/g, '/');
+    spokenText = spokenText.replace(/point/g, '.'); // decimal
+    spokenText = spokenText.replace(/ /g, ''); // remove spaces
+    return spokenText;
+}
+
+    </script>
+</body>
+</html>
